@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	alsa	# without ALSA support for MIDI
+#
 Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
@@ -12,6 +16,10 @@ Source2:	%{name}.png
 Source3:	%{name}.conf
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	SDL-devel >= 1.2.0
+BuildRequires:	SDL_net-devel
+%{?with_alsa:BuildRequires:	alsa-lib-devel >= 0.9.0}
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	libpng-devel
 %{?debug:BuildRequires:	ncurses-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -37,6 +45,16 @@ komputerach.
 %setup -q
 
 %build
+# kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
+tail +306 acinclude.m4 > acinclude.m4.tmp
+mv -f acinclude.m4.tmp acinclude.m4
+%if !%{with alsa}
+echo 'AC_DEFUN([AM_PATH_ALSA], [$3])' >> acinclude.m4
+%endif
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 %configure \
 	--enable-shots \
 	%{?debug:--enable-debug}
@@ -61,7 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README THANKS
 %attr(755,root,root) %{_bindir}/*
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/*
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dosbox.conf
 %{_mandir}/man1/*
 %{_desktopdir}/*
 %{_pixmapsdir}/*
