@@ -6,7 +6,7 @@ Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
 Version:	0.61
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
