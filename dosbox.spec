@@ -22,6 +22,7 @@ BuildRequires:	SDL_net-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libpng-devel
+BuildRequires:	libstdc++-devel
 %{?debug:BuildRequires:	ncurses-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
