@@ -7,6 +7,6 @@ Icon=dosbox.png
 Exec=dosbox
 Terminal=false
 Type=Application
-Categories=Application;Emulator;
+Categories=Utility;Emulator;
 Encoding=UTF-8
 # vi: encoding=utf-8
