@@ -7,9 +7,10 @@ License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sf.net/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	91c49a597134f35f899d32a8b253205b
+URL:		http://dosbox.sourceforge.net/
+BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	libpng-devel
 %{?debug:BuildRequires:	ncurses-devel}
-BuildRequires:	SDL-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -49,6 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README THANKS
+%doc AUTHORS ChangeLog NEWS README THANKS
 %attr(755,root,root) %{_bindir}/*
 %{_mandir}/man1/*
