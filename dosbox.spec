@@ -6,7 +6,7 @@ Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
 Version:	0.62
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
@@ -28,17 +28,20 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		specflags	-fmerge-all-constants -ffast-math
 
 %description
-DOSBox emulates a 286/386 realmode CPU, Directory FileSystem/XMS/EMS,
-a SoundBlaster card for excellent sound compatibility with older
-games...
+DOSBox emulates a 286/386 realmode/protected mode CPU, Directory
+FileSystem/XMS/EMS, Tandy/Hercules/CGA/EGA/VGA/VESA graphics, a
+SoundBlaster/Gravis Ultra Sound card for excellent sound compatibility
+with older games...
 
 You can "re-live" the good old days with the help of DOSBox, it can
 run plenty of the old classics that don't run on your new computer!
 
 %description -l pl
-DOSBox emuluje tryb rzeczywisty procesora 286/386, system plików z
-katalogami, pamiêæ XMS/EMS oraz kartê SoundBlaster w celu zapewnienia
-znakomitej kompatybilno¶ci ze starymi grami.
+DOSBox emuluje tryb rzeczywisty/chroniony procesora 286/386, system
+plików z katalogami, pamiêæ XMS/EMS, karty graficzne
+Tandy/Hercules/CGA/EGA/VGA/VESA oraz karty muzyczne
+SoundBlaster/Gravis Ultra Sound w celu zapewnienia znakomitej
+kompatybilno¶ci ze starymi grami.
 
 Stare wspomnienia od¿yj± z pomoc± DOSBoksa. Dziêki niemu mo¿na
 uruchomiæ mnóstwo klasyków, które nie odpalaj± siê na nowych
