@@ -9,7 +9,7 @@ Version:	0.60
 Release:	1
 License:	GPL
 Group:		Applications/Emulators
-Source0:	http://dl.sf.net/%{name}/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	9f42dff884dc67b46b3fdde27ac44578
 Source1:	%{name}.desktop
 Source2:	%{name}.png
