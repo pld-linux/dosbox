@@ -6,6 +6,7 @@ Release:	1
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sf.net/%{name}/%{name}-%{version}.tar.gz
+# Source0-md5:	91c49a597134f35f899d32a8b253205b
 BuildRequires:	libpng-devel
 %{?debug:BuildRequires:	ncurses-devel}
 BuildRequires:	SDL-devel
