@@ -9,7 +9,7 @@ Version:	0.63
 Release:	1
 License:	GPL
 Group:		Applications/Emulators
-Source0:	http://internap.dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
 # Source0-md5:	629413e41224ae9cdd115fdafd55cbdc
 Source1:	%{name}.desktop
 Source2:	%{name}.png
