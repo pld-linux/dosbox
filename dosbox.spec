@@ -46,7 +46,7 @@ komputerach.
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
-tail +306 acinclude.m4 > acinclude.m4.tmp
+tail -n +306 acinclude.m4 > acinclude.m4.tmp
 mv -f acinclude.m4.tmp acinclude.m4
 %if !%{with alsa}
 echo 'AC_DEFUN([AM_PATH_ALSA], [$3])' >> acinclude.m4
