@@ -12,19 +12,21 @@ BuildRequires:	SDL-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-DOSBox emulates a 286/386 realmode CPU, Directory FileSystem/XMS/EMS, a
-SoundBlaster card for excellent sound compatibility with older games...
+DOSBox emulates a 286/386 realmode CPU, Directory FileSystem/XMS/EMS,
+a SoundBlaster card for excellent sound compatibility with older
+games...
 
-You can "re-live" the good old days with the help of DOSBox, it can run plenty
-of the old classics that don't run on your new computer!
+You can "re-live" the good old days with the help of DOSBox, it can
+run plenty of the old classics that don't run on your new computer!
 
 %description -l pl
 DOSBox emuluje tryb rzeczywisty procesora 286/386, system plików z
 katalogami, pamiêæ XMS/EMS oraz kartê SoundBlaster w celu zapewnienia
 znakomitej kompatybilno¶ci ze starymi grami.
 
-Stare wspomnienia od¿yj± z pomoc± DOSBoxa. Dziêki niemu mo¿na uruchomiæ
-mnóstwo klasyków, które nie odpalaj± siê na nowych komputerach.
+Stare wspomnienia od¿yj± z pomoc± DOSBoxa. Dziêki niemu mo¿na
+uruchomiæ mnóstwo klasyków, które nie odpalaj± siê na nowych
+komputerach.
 
 %prep
 %setup -q
@@ -37,6 +39,7 @@ mnóstwo klasyków, które nie odpalaj± siê na nowych komputerach.
 %{__make}
 
 %install
+rm -rf $RPM_BUILD_ROOT
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
