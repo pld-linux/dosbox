@@ -29,7 +29,7 @@ DOSBox emuluje tryb rzeczywisty procesora 286/386, system plików z
 katalogami, pamiêæ XMS/EMS oraz kartê SoundBlaster w celu zapewnienia
 znakomitej kompatybilno¶ci ze starymi grami.
 
-Stare wspomnienia od¿yj± z pomoc± DOSBoxa. Dziêki niemu mo¿na
+Stare wspomnienia od¿yj± z pomoc± DOSBoksa. Dziêki niemu mo¿na
 uruchomiæ mnóstwo klasyków, które nie odpalaj± siê na nowych
 komputerach.
 
@@ -61,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README THANKS
 %attr(755,root,root) %{_bindir}/*
-%{_sysconfdir}/*
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/*
 %{_mandir}/man1/*
 %{_desktopdir}/*
 %{_pixmapsdir}/*
