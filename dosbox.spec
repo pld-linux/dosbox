@@ -2,11 +2,14 @@ Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
 Version:	0.58
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sf.net/%{name}/%{name}-%{version}.tar.gz
 # Source0-md5:	91c49a597134f35f899d32a8b253205b
+Source1:	%{name}.desktop
+Source2:	%{name}.png
+Source3:	%{name}.conf
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	libpng-devel
@@ -42,8 +45,14 @@ komputerach.
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_desktopdir},%{_pixmapsdir},%{_sysconfdir}}
+
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+install %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
+install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
+install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -52,4 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README THANKS
 %attr(755,root,root) %{_bindir}/*
+%{_sysconfdir}/*
 %{_mandir}/man1/*
+%{_desktopdir}/*
+%{_pixmapsdir}/*
