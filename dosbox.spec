@@ -9,7 +9,7 @@ Version:	0.62
 Release:	2
 License:	GPL
 Group:		Applications/Emulators
-Source0:	http://ovh.dl.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
 # Source0-md5:	80b10f438119f9d83b44dcf175493dcb
 Source1:	%{name}.desktop
 Source2:	%{name}.png
@@ -25,7 +25,7 @@ BuildRequires:	libpng-devel
 %{?debug:BuildRequires:	ncurses-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		rpmcflags	"%{optflags} %{?!debug:-O3 -fmerge-all-constants -funswitch-loops -ffast-math}"
+%define		specflags	-fmerge-all-constants -ffast-math
 
 %description
 DOSBox emulates a 286/386 realmode CPU, Directory FileSystem/XMS/EMS,
