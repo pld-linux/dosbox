@@ -6,7 +6,7 @@ Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
 Version:	0.63
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
@@ -15,6 +15,8 @@ Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}.conf
 Patch0:		%{name}-hq2x.patch
+# http://home.amis.net/lkslavi/dosbox.html
+Patch1:		%{name}_coreswitch.patch
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	SDL_net-devel
@@ -51,6 +53,7 @@ komputerach.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
