@@ -1,0 +1,332 @@
+diff -urN dosbox_org/include/cpu.h dosbox/include/cpu.h
+--- dosbox_org/include/cpu.h	2005-02-10 11:20:47.000000000 +0100
++++ dosbox/include/cpu.h	2005-02-21 14:52:24.000000000 +0100
+@@ -27,6 +27,9 @@
+ extern Bits CPU_Cycles;
+ extern Bits CPU_CycleLeft;
+ extern Bits CPU_CycleMax;
++extern bool CPU_TimeSynched;
++extern Bitu CPU_CyclesCur;
++extern char core_mode[10];
+ 
+ /* Some common Defines */
+ /* A CPU Handler */
+diff -urN dosbox_org/include/mapper.h dosbox/include/mapper.h
+--- dosbox_org/include/mapper.h	2005-02-10 11:20:47.000000000 +0100
++++ dosbox/include/mapper.h	2005-02-21 14:52:24.000000000 +0100
+@@ -21,7 +21,8 @@
+ 
+ enum MapKeys {
+ 	MK_f1,MK_f2,MK_f3,MK_f4,MK_f5,MK_f6,MK_f7,MK_f8,MK_f9,MK_f10,MK_f11,MK_f12,
+-	MK_return,MK_kpminus,MK_scrolllock,MK_printscreen,MK_pause,
++	MK_return,MK_kpminus,MK_equals,MK_scrolllock,MK_printscreen,MK_pause,
++	MK_1, MK_2, MK_3, MK_4,
+ 
+ };
+ 
+diff -urN dosbox_org/src/cpu/core_dyn_x86.cpp dosbox/src/cpu/core_dyn_x86.cpp
+--- dosbox_org/src/cpu/core_dyn_x86.cpp	2005-02-10 11:20:48.000000000 +0100
++++ dosbox/src/cpu/core_dyn_x86.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -188,6 +188,8 @@
+ }
+ #include "core_dyn_x86/decoder.h"
+ 
++Bitu CPU_CyclesOld;
++
+ Bits CPU_Core_Dyn_X86_Run(void) {
+ 	/* Determine the linear address of CS:EIP */
+ restart_core:
+@@ -204,8 +206,10 @@
+ 		block=CreateCacheBlock(chandler,ip_point,32);
+ 	}
+ run_block:
++	CPU_CyclesOld = CPU_Cycles;
+ 	cache.block.running=0;
+ 	BlockReturn ret=gen_runcode(block->cache.start);
++	cycle_count += CPU_CyclesOld - CPU_Cycles;
+ 	switch (ret) {
+ 	case BR_Normal:
+ 		/* Maybe check if we staying in the same page? */
+diff -urN dosbox_org/src/cpu/core_full.cpp dosbox/src/cpu/core_full.cpp
+--- dosbox_org/src/cpu/core_full.cpp	2005-02-10 11:20:48.000000000 +0100
++++ dosbox/src/cpu/core_full.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -64,8 +64,8 @@
+ Bits CPU_Core_Full_Run(void) {
+ 	FullData inst;	
+ 	while (CPU_Cycles-->0) {
+-#if C_DEBUG
+ 		cycle_count++;
++#if C_DEBUG		
+ #if C_HEAVY_DEBUG
+ 		if (DEBUG_HeavyIsBreakpoint()) {
+ 			FillFlags();
+diff -urN dosbox_org/src/cpu/core_normal.cpp dosbox/src/cpu/core_normal.cpp
+--- dosbox_org/src/cpu/core_normal.cpp	2005-02-10 11:20:48.000000000 +0100
++++ dosbox/src/cpu/core_normal.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -48,7 +48,7 @@
+ #define SaveMd(off,val)	mem_writed_inline(off,val)
+ #endif
+ 
+-extern Bitu cycle_count;
++Bitu cycle_count;
+ 
+ #if C_FPU
+ #define CPU_FPU	1						//Enable FPU escape instructions
+@@ -151,8 +151,8 @@
+ 			return debugCallback;
+ 		};
+ #endif
+-		cycle_count++;
+ #endif
++		cycle_count++;
+ restart_opcode:
+ 		switch (core.opcode_index+Fetchb()) {
+ 		#include "core_normal/prefix_none.h"
+diff -urN dosbox_org/src/cpu/core_simple.cpp dosbox/src/cpu/core_simple.cpp
+--- dosbox_org/src/cpu/core_simple.cpp	2005-02-10 11:20:48.000000000 +0100
++++ dosbox/src/cpu/core_simple.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -144,8 +144,8 @@
+ 			return debugCallback;
+ 		};
+ #endif
+-		cycle_count++;
+ #endif
++		cycle_count++;
+ restart_opcode:
+ 		switch (core.opcode_index+Fetchb()) {
+ 
+diff -urN dosbox_org/src/cpu/cpu.cpp dosbox/src/cpu/cpu.cpp
+--- dosbox_org/src/cpu/cpu.cpp	2005-02-10 11:20:48.000000000 +0100
++++ dosbox/src/cpu/cpu.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -44,6 +44,9 @@
+ Bits CPU_CycleMax = 2500;
+ Bits CPU_CycleUp = 0;
+ Bits CPU_CycleDown = 0;
++bool CPU_TimeSynched = false;
++Bitu CPU_CyclesCur = 0;
++char core_mode[10];
+ CPU_Decoder * cpudecoder;
+ 
+ void CPU_Core_Full_Init(void);
+@@ -1793,6 +1796,37 @@
+ 	GFX_SetTitle(CPU_CycleMax,-1,false);
+ }
+ 
++static void CPU_ToggleTimeSynch(void) {
++    CPU_TimeSynched = ! CPU_TimeSynched;
++    GFX_SetTitle(CPU_CycleMax,-1,false);
++}
++
++static void CPU_ToggleFullCore(void) {
++    strcpy(core_mode, "Full"); 
++    cpudecoder=&CPU_Core_Full_Run;
++    GFX_SetTitle(CPU_CycleMax,-1,false);
++}
++
++static void CPU_ToggleNormalCore(void) {
++    strcpy(core_mode, "Normal"); 
++    cpudecoder=&CPU_Core_Normal_Run;
++    GFX_SetTitle(CPU_CycleMax,-1,false);
++}
++
++static void CPU_ToggleDynamicCore(void) {
++    strcpy(core_mode, "Dynamic"); 
++    cpudecoder=&CPU_Core_Dyn_X86_Run;
++    GFX_SetTitle(CPU_CycleMax,-1,false);
++}
++
++static void CPU_ToggleSimpleCore(void) {
++    strcpy(core_mode, "Simple"); 
++    cpudecoder=&CPU_Core_Simple_Run;;
++    GFX_SetTitle(CPU_CycleMax,-1,false);
++}
++
++extern bool showcycles;
++
+ void CPU_Init(Section* sec) {
+ 	Section_prop * section=static_cast<Section_prop *>(sec);
+ 	reg_eax=0;
+@@ -1829,22 +1863,33 @@
+ #endif
+ 	MAPPER_AddHandler(CPU_CycleDecrease,MK_f11,MMOD1,"cycledown","Dec Cycles");
+ 	MAPPER_AddHandler(CPU_CycleIncrease,MK_f12,MMOD1,"cycleup"  ,"Inc Cycles");
++	MAPPER_AddHandler(CPU_ToggleTimeSynch,MK_equals,MMOD1,"timesynched"  ,"Tog. TimeSynch");
++	MAPPER_AddHandler(CPU_ToggleNormalCore,MK_1,MMOD1,"normal"  ,"Tog. Normal Core");
++	MAPPER_AddHandler(CPU_ToggleFullCore,MK_2,MMOD1,"full"  ,"Tog. Full Core");
++	MAPPER_AddHandler(CPU_ToggleDynamicCore,MK_3,MMOD1,"dynamic"  ,"Tog. Dynamic Core");
++	MAPPER_AddHandler(CPU_ToggleSimpleCore,MK_4,MMOD1,"simple"  ,"Tog. Simple Core");
+ 	CPU_Cycles=0;
+ 	CPU_CycleMax=section->Get_int("cycles");;
+ 	CPU_CycleUp=section->Get_int("cycleup");
+ 	CPU_CycleDown=section->Get_int("cycledown");
++	CPU_TimeSynched=section->Get_bool("timesynched");
++	showcycles=section->Get_bool("showcycles");
+ 	const char * core=section->Get_string("core");
++	strcpy(core_mode, "Normal");
+ 	cpudecoder=&CPU_Core_Normal_Run;
+ 	if (!strcasecmp(core,"normal")) {
+ 		cpudecoder=&CPU_Core_Normal_Run;
+ 	} else if (!strcasecmp(core,"simple")) {
+ 		cpudecoder=&CPU_Core_Simple_Run;
++		strcpy(core_mode, "Simple");
+ 	} else if (!strcasecmp(core,"full")) {
+ 		cpudecoder=&CPU_Core_Full_Run;
++		strcpy(core_mode, "Full");
+ 	} 
+ #if (C_DYNAMIC_X86)
+ 	else if (!strcasecmp(core,"dynamic")) {
+ 		cpudecoder=&CPU_Core_Dyn_X86_Run;
++		strcpy(core_mode, "Dynamic");
+ 	} 
+ #endif
+ 	else {
+diff -urN dosbox_org/src/debug/debug.cpp dosbox/src/debug/debug.cpp
+--- dosbox_org/src/debug/debug.cpp	2005-02-10 11:20:50.000000000 +0100
++++ dosbox/src/debug/debug.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -92,7 +92,7 @@
+ static Bitu oldflags;
+ DBGBlock dbg;
+ static Bitu input_count;
+-Bitu cycle_count;
++extern Bitu cycle_count;
+ static bool debugging;
+ 
+ 
+diff -urN dosbox_org/src/dosbox.cpp dosbox/src/dosbox.cpp
+--- dosbox_org/src/dosbox.cpp	2005-02-10 11:20:47.000000000 +0100
++++ dosbox/src/dosbox.cpp	2005-02-21 14:58:12.000000000 +0100
+@@ -116,11 +116,34 @@
+ 
+ Bits RemainTicks;
+ Bits LastTicks;
++Bits Ticks = 0;
++
++bool showcycles;
++
++extern void GFX_SetTitle(Bits cycles, Bits frameskip,bool paused);
++extern Bitu cycle_count;
++extern Bitu frames;
+ 
+ static Bitu Normal_Loop(void) {
+ 	Bits ret,NewTicks;
+ 	while (1) {
+ 		if (PIC_RunQueue()) {
++			if((CPU_TimeSynched) || (showcycles)) {
++			    NewTicks=GetTicks();
++
++			    if((CPU_TimeSynched) && (NewTicks!=LastTicks))
++				CPU_Cycles=0;
++
++			    if((showcycles) && (NewTicks>=Ticks)) {
++				CPU_CyclesCur=(cycle_count-CPU_CyclesCur) >> 9;
++				Ticks=NewTicks + 512;		// next update in 512ms
++				frames*=1.95;			// compensate for 512ms interval
++				GFX_SetTitle(CPU_CycleMax,-1,false);
++				CPU_CyclesCur=cycle_count;
++				frames=0;
++			    }
++			}
++
+ 			ret=(*cpudecoder)();
+ 			if (ret<0) return 1;
+ 			if (ret>0) {
+@@ -243,6 +266,8 @@
+ 	secprop->Add_int("cycles",3000);
+ 	secprop->Add_int("cycleup",500);
+ 	secprop->Add_int("cycledown",20);
++	secprop->Add_bool("timesynched",false);
++	secprop->Add_bool("showcycles",false);
+ 	MSG_Add("CPU_CONFIGFILE_HELP",
+ 		"core -- CPU Core used in emulation: simple,normal,full"
+ #if (C_DYNAMIC_X86)
+@@ -250,9 +275,11 @@
+ #endif
+ 		".\n"
+ 		"cycles -- Amount of instructions dosbox tries to emulate each millisecond.\n"
+-		"          Setting this higher than your machine can handle is bad!\n"
++		"          Setting this higher than your machine can handle is bad! (unless timesynched is set)\n"
+ 		"cycleup   -- Amount of cycles to increase/decrease with keycombo.\n"
+ 		"cycledown    Setting it lower than 100 will be a percentage.\n"
++		"timesynched -- Do not emulate more cycles than possible.\n"
++		"showcycles -- Display the number of emulated cycles in the titlebar (uses some CPU).\n"
+ 	);
+ #if C_FPU
+ 	secprop->AddInitFunction(&FPU_Init);
+diff -urN dosbox_org/src/gui/sdl_mapper.cpp dosbox/src/gui/sdl_mapper.cpp
+--- dosbox_org/src/gui/sdl_mapper.cpp	2005-02-10 11:21:07.000000000 +0100
++++ dosbox/src/gui/sdl_mapper.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -748,6 +748,9 @@
+ 		case MK_kpminus:
+ 			key=SDLK_KP_MINUS;
+ 			break;
++		case MK_equals:
++			key=SDLK_EQUALS;
++			break;
+ 		case MK_scrolllock:
+ 			key=SDLK_SCROLLOCK;
+ 			break;
+@@ -757,6 +760,18 @@
+ 		case MK_printscreen:
+ 			key=SDLK_PRINT;
+ 			break;
++		case MK_1:
++			key=SDLK_1;
++			break;
++		case MK_2:
++			key=SDLK_2;
++			break;
++		case MK_3:
++			key=SDLK_3;
++			break;
++		case MK_4:
++			key=SDLK_4;
++			break;
+ 		}
+ 		sprintf(buf,"%s \"key %d%s%s%s\"",
+ 			entry,
+@@ -1133,7 +1148,7 @@
+ }
+ 
+ void MAPPER_AddHandler(MAPPER_Handler * handler,MapKeys key,Bitu mods,char * eventname,char * buttonname) {
+-	char tempname[17];
++	char tempname[99];
+ 	strcpy(tempname,"hand_");
+ 	strcat(tempname,eventname);
+ 	new CHandlerEvent(tempname,handler,key,mods,buttonname);
+diff -urN dosbox_org/src/gui/sdlmain.cpp dosbox/src/gui/sdlmain.cpp
+--- dosbox_org/src/gui/sdlmain.cpp	2005-02-10 11:21:07.000000000 +0100
++++ dosbox/src/gui/sdlmain.cpp	2005-02-21 14:52:24.000000000 +0100
+@@ -197,16 +197,23 @@
+ //Globals for keyboard initialisation
+ bool startup_state_numlock=false;
+ bool startup_state_capslock=false;
++
++Bitu frames = 0;
++extern bool showcycles;
++
++#include "cpu.h"
++
+ void GFX_SetTitle(Bits cycles,Bits frameskip,bool paused){
+ 	char title[200]={0};
+ 	static Bits internal_cycles=0;
+ 	static Bits internal_frameskip=0;
+ 	if(cycles != -1) internal_cycles = cycles;
+ 	if(frameskip != -1) internal_frameskip = frameskip;
++	if(!showcycles) frames = 0;
+ 	if(paused)
+-		sprintf(title,"DOSBox %s,Cpu Cycles: %8d, Frameskip %2d, Program: %8s PAUSED",VERSION,internal_cycles,internal_frameskip,RunningProgram);
++		sprintf(title,"Core: %s, Cpu Cycles: %8d %c %8d, FPS: %d, skip %2d, Program: %8s PAUSED",core_mode,CPU_CyclesCur,CPU_TimeSynched ? '<' : '=',internal_cycles,frames,internal_frameskip,RunningProgram);
+ 	else
+-		sprintf(title,"DOSBox %s,Cpu Cycles: %8d, Frameskip %2d, Program: %8s",VERSION,internal_cycles,internal_frameskip,RunningProgram);     
++		sprintf(title,"Core: %s, Cpu Cycles: %8d %c %8d, FPS: %d, skip %2d, Program: %8s",core_mode,CPU_CyclesCur,CPU_TimeSynched ? '<' : '=',internal_cycles,frames,internal_frameskip,RunningProgram);
+ 	SDL_WM_SetCaption(title,VERSION);
+ }
+ 
+@@ -597,6 +604,7 @@
+ 	int ret;
+ 	if (!sdl.updating) return;
+ 	sdl.updating=false;
++	frames++;
+ 	switch (sdl.desktop.type) {
+ 	case SCREEN_SURFACE:
+ 		if (SDL_MUSTLOCK(sdl.surface)) {
