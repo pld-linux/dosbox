@@ -18,8 +18,8 @@ Patch0:		%{name}-hq2x.patch
 # http://home.amis.net/lkslavi/dosbox.html
 Patch1:		%{name}_coreswitch.patch
 URL:		http://dosbox.sourceforge.net/
-BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	SDL_net-devel
+BuildRequires:	SDL_sound-devel
 %{?with_alsa:BuildRequires:	alsa-lib-devel >= 0.9.0}
 BuildRequires:	autoconf
 BuildRequires:	automake
