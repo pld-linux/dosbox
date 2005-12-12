@@ -17,6 +17,7 @@ Source3:	%{name}.conf
 Patch0:		%{name}-hq2x.patch
 # http://home.amis.net/lkslavi/dosbox.html
 Patch1:		%{name}_coreswitch.patch
+Patch2:		%{name}-c++.patch
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	SDL_net-devel
 BuildRequires:	SDL_sound-devel
@@ -54,6 +55,7 @@ komputerach.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
