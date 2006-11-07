@@ -5,19 +5,18 @@
 Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
 Name:		dosbox
-Version:	0.63
+Version:	0.65
 Release:	1
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://dl.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
-# Source0-md5:	629413e41224ae9cdd115fdafd55cbdc
+# Source0-md5:	fef84c292c3aeae747368b9875c1575a
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}.conf
-Patch0:		%{name}-hq2x.patch
 URL:		http://dosbox.sourceforge.net/
-BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	SDL_net-devel
+BuildRequires:	SDL_sound-devel
 %{?with_alsa:BuildRequires:	alsa-lib-devel >= 0.9.0}
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -50,7 +49,6 @@ komputerach.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
@@ -88,5 +86,5 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS NEWS README THANKS dosbox.conf
 %attr(755,root,root) %{_bindir}/*
 %{_mandir}/man1/*
-%{_desktopdir}/*
+%{_desktopdir}/*.desktop
 %{_pixmapsdir}/*
