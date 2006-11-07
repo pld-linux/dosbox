@@ -86,5 +86,5 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS NEWS README THANKS dosbox.conf
 %attr(755,root,root) %{_bindir}/*
 %{_mandir}/man1/*
-%{_desktopdir}/*
+%{_desktopdir}/*.desktop
 %{_pixmapsdir}/*
