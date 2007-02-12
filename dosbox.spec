@@ -3,7 +3,7 @@
 %bcond_without	alsa	# without ALSA support for MIDI
 #
 Summary:	x86/DOS emulator with sound/graphics primarily for games
-Summary(pl):	Emulator x86/DOS z d¼wiêkiem/grafik± g³ównie dla gier
+Summary(pl.UTF-8):   Emulator x86/DOS z dÅºwiÄ™kiem/grafikÄ… gÅ‚Ã³wnie dla gier
 Name:		dosbox
 Version:	0.65
 Release:	1
@@ -36,15 +36,15 @@ with older games...
 You can "re-live" the good old days with the help of DOSBox, it can
 run plenty of the old classics that don't run on your new computer!
 
-%description -l pl
+%description -l pl.UTF-8
 DOSBox emuluje tryb rzeczywisty/chroniony procesora 286/386, system
-plików z katalogami, pamiêæ XMS/EMS, karty graficzne
+plikÃ³w z katalogami, pamiÄ™Ä‡ XMS/EMS, karty graficzne
 Tandy/Hercules/CGA/EGA/VGA/VESA oraz karty muzyczne
 SoundBlaster/Gravis Ultra Sound w celu zapewnienia znakomitej
-kompatybilno¶ci ze starymi grami.
+kompatybilnoÅ›ci ze starymi grami.
 
-Stare wspomnienia od¿yj± z pomoc± DOSBoksa. Dziêki niemu mo¿na
-uruchomiæ mnóstwo klasyków, które nie odpalaj± siê na nowych
+Stare wspomnienia odÅ¼yjÄ… z pomocÄ… DOSBoksa. DziÄ™ki niemu moÅ¼na
+uruchomiÄ‡ mnÃ³stwo klasykÃ³w, ktÃ³re nie odpalajÄ… siÄ™ na nowych
 komputerach.
 
 %prep
