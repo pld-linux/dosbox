@@ -1,0 +1,2 @@
+- rel ++ (2) due to: dosbox: relocation error: dosbox: symbol _ZNSo9_M_insertEPKci, version GLIBCXX_3.4.9 not defined in file libstdc++.so.6 with link time reference
+- STBR
