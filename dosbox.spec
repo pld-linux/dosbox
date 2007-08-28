@@ -15,6 +15,10 @@ Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}.conf
 URL:		http://dosbox.sourceforge.net/
+BuildRequires:	OpenGL-devel
+# because of SDL_opengl deps
+BuildRequires:	OpenGL-GLU-devel
+BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	SDL_net-devel
 BuildRequires:	SDL_sound-devel
 %{?with_alsa:BuildRequires:	alsa-lib-devel >= 0.9.0}
