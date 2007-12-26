@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=DOSBox
 Comment=x86/DOS emulator
 Comment[pl]=Emulator x86/DOS
-Icon=dosbox.png
+Icon=dosbox
 Exec=dosbox
 Terminal=false
 Type=Application
