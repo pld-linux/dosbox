@@ -6,7 +6,7 @@ Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl.UTF-8):	Emulator x86/DOS z dźwiękiem/grafiką głównie dla gier
 Name:		dosbox
 Version:	0.74
-Release:	3
+Release:	4
 License:	GPL v2+
 Group:		Applications/Emulators
 Source0:	http://downloads.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
@@ -14,6 +14,7 @@ Source0:	http://downloads.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}.conf
+Patch0:		%{name}-gcc46.patch
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	OpenGL-devel
 # because of SDL_opengl deps
@@ -53,6 +54,7 @@ komputerach.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
