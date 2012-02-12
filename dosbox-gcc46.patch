@@ -1,0 +1,11 @@
+--- dosbox-0.74/include/dos_inc.h~	2010-05-10 19:43:54.000000000 +0200
++++ dosbox-0.74/include/dos_inc.h	2012-02-12 19:37:06.688604486 +0100
+@@ -28,6 +28,8 @@
+ #include "mem.h"
+ #endif
+ 
++#include <cstddef>
++
+ #ifdef _MSC_VER
+ #pragma pack (1)
+ #endif
