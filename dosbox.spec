@@ -2,19 +2,20 @@
 # Conditional build:
 %bcond_without	alsa	# without ALSA support for MIDI
 #
+%define ver_package 0.74.3
+%define ver_tarball 0.74-3
 Summary:	x86/DOS emulator with sound/graphics primarily for games
 Summary(pl.UTF-8):	Emulator x86/DOS z dźwiękiem/grafiką głównie dla gier
 Name:		dosbox
-Version:	0.74
-Release:	6
+Version:	%{ver_package}
+Release:	1
 License:	GPL v2+
 Group:		Applications/Emulators
-Source0:	http://downloads.sourceforge.net/dosbox/%{name}-%{version}.tar.gz
-# Source0-md5:	b9b240fa87104421962d14eee71351e8
+Source0:	http://downloads.sourceforge.net/dosbox/%{name}-%{ver_tarball}.tar.gz
+# Source0-md5:	759c75fffb59c542f80fb8391012911b
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Source3:	%{name}.conf
-Patch0:		%{name}-gcc46.patch
 URL:		http://dosbox.sourceforge.net/
 BuildRequires:	OpenGL-devel
 # because of SDL_opengl deps
@@ -53,8 +54,7 @@ uruchomić mnóstwo klasyków, które nie odpalają się na nowych
 komputerach.
 
 %prep
-%setup -q
-%patch0 -p1
+%setup -q -n %{name}-%{ver_tarball}
 
 %build
 # kill AM_PATH_SDL and AM_PATH_ALSA, leave only AH_{TOP,BOTTOM}
